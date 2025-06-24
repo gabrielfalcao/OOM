@@ -1,0 +1,88 @@
+[package]
+name = "OOM"
+version = "0.1.0"
+description = "Lightweight Incremental Parser Generator inspired by Regular Expressions and Parsing Expression Grammars"
+documentation = "https://docs.rs/unique-pointer"
+homepage = "https://crates.io/crates/oom"
+repository = "https://github.com/gabrielfalcao/oom"
+authors = ["Gabriel DeMoura <gabrielteratos@gmail.com>"]
+edition = "2024"
+license = "MIT"
+readme = "README.md"
+categories = ["parser"]
+keywords = ["parser", "parsing", "compiler", "interpreter"]
+autoexamples = false
+autobenches = false
+autotests = false
+
+
+[lib]
+name = "oom"
+path = "src/lib.rs"
+bench = false
+
+[dependencies]
+clap = { version = "4.5.40", features = ["derive", "env", "string", "unicode", "wrap_help"] }
+serde = { version = "1.0.219", features = ["derive"] }
+unique-pointer = { version = "0.8.0" }
+
+[dev-dependencies]
+k9 = "0.12.0"
+
+
+
+[[test]]
+name = "test_buffer"
+path = "./tests/test_buffer.rs"
+
+[[test]]
+name = "test_matcher_named"
+path = "./tests/test_matcher_named.rs"
+
+[[test]]
+name = "test_matcher_one_or_more"
+path = "./tests/test_matcher_one_or_more.rs"
+
+[[test]]
+name = "test_matcher_literal"
+path = "./tests/test_matcher_literal.rs"
+
+[[test]]
+name = "test_matcher_range"
+path = "./tests/test_matcher_range.rs"
+
+[[test]]
+name = "test_matcher_special"
+path = "./tests/test_matcher_special.rs"
+
+[[test]]
+name = "test_matcher_zero_or_more"
+path = "./tests/test_matcher_zero_or_more.rs"
+
+[[test]]
+name = "test_matcher_not"
+path = "./tests/test_matcher_not.rs"
+[[test]]
+name = "test_matcher_optional"
+path = "./tests/test_matcher_optional.rs"
+
+[[test]]
+name = "test_matcher_atomic"
+path = "./tests/test_matcher_atomic.rs"
+
+[[test]]
+name = "test_matcher_compound_atomic"
+path = "./tests/test_matcher_compound_atomic.rs"
+
+[[test]]
+name = "test_matcher_ascii"
+path = "./tests/test_matcher_ascii.rs"
+
+[[test]]
+name = "test_parse_type_like_values"
+path = "./tests/test_parse_type_like_values.rs"
+
+
+# [[test]]
+# name = "test_parse_dummy_data_format"
+# path = "./tests/test_parse_dummy_data_format.rs"
