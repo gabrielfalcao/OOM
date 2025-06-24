@@ -18,6 +18,7 @@ pub enum Production {
     CompoundAtomic(Box<Production>),
     Literal(String),
     Named(String),
+    Unnamed(String),
     Not(Box<Production>),
     OneOrMore(Box<Production>),
     Optional(Box<Production>),
@@ -49,12 +50,31 @@ impl Production {
         start: &Position,
         name: &str,
     ) -> Option<Match> {
-        let matcher = state.matcher(name).expect("named matcher");
+        let matcher = state
+            .matcher(name)
+            .expect(&format!("registered matcher with name {:#?}", name));
         if let Some(r#match) = matcher.is_match(state.as_mut(), input, start) {
             Some(
                 Into::<Match>::into((self.clone(), self.span(start, input)))
                     .with_inner(vec![r#match]),
             )
+        } else {
+            None
+        }
+    }
+
+    fn match_unnamed(
+        &self,
+        state: &mut State,
+        input: &str,
+        start: &Position,
+        name: &str,
+    ) -> Option<Match> {
+        let matcher = state
+            .matcher(name)
+            .expect(&format!("registered matcher with name {:#?}", name));
+        if let Some(r#match) = matcher.is_match(state.as_mut(), input, start) {
+            Some(r#match)
         } else {
             None
         }
@@ -113,9 +133,6 @@ impl Production {
         start: &Position,
         matcher: &Production,
     ) -> Option<Match> {
-        if input.is_empty() {
-            return Some((self.clone(), self.span(start, input)).into());
-        }
         let mut buffer = Buffer::new(input, false);
         if let Some(r#match) = buffer.produce(state.as_mut(), start, matcher) {
             Some(
@@ -123,7 +140,7 @@ impl Production {
                     .with_inner(vec![r#match]),
             )
         } else {
-            None
+            return Some((self.clone(), self.span(start, "")).into());
         }
     }
 
@@ -277,6 +294,7 @@ impl Matcher for Production {
                 self.match_compound_atomic(state, input, start, matcher.as_ref()),
             Production::Literal(literal) => self.match_literal(state, input, start, literal),
             Production::Named(name) => self.match_named(state, input, start, name),
+            Production::Unnamed(name) => self.match_unnamed(state, input, start, name),
             Production::Not(matcher) => self.match_not(state, input, start, matcher),
             Production::OneOrMore(matcher) =>
                 self.match_one_or_more(state, input, start, matcher.as_ref()),
@@ -297,6 +315,7 @@ impl Matcher for Production {
             Production::CompoundAtomic(compound_atomic) => "Production::CompoundAtomic",
             Production::Literal(string) => string.as_str(),
             Production::Named(name) => name.as_str(),
+            Production::Unnamed(name) => name.as_str(),
             Production::Not(string) => "Production::Not",
             Production::OneOrMore(string) => "Production::OneOrMore",
             Production::Optional(string) => "Production::Optional",
@@ -333,6 +352,9 @@ impl Matcher for Production {
             },
             Production::Named(string) => {
                 format!("Production::Named({})", string.to_string())
+            },
+            Production::Unnamed(string) => {
+                format!("Production::Unnamed({})", string.to_string())
             },
             Production::Special(string) => {
                 format!("Production::Special({})", string.name())
@@ -395,5 +417,32 @@ impl From<Range<char>> for Production {
 impl From<Ascii> for Production {
     fn from(ascii: Ascii) -> Production {
         Production::Ascii(ascii)
+    }
+}
+
+impl From<&str> for Box<Production> {
+    fn from(string: &str) -> Box<Production> {
+        Box::new(Production::Named(string.to_string()))
+    }
+}
+impl From<String> for Box<Production> {
+    fn from(string: String) -> Box<Production> {
+        Box::new(Production::Named(string.clone()))
+    }
+}
+impl From<Special> for Box<Production> {
+    fn from(matcher: Special) -> Box<Production> {
+        Box::new(Production::Special(matcher))
+    }
+}
+impl From<Range<char>> for Box<Production> {
+    fn from(range: Range<char>) -> Box<Production> {
+        Box::new(Production::Range(range))
+    }
+}
+
+impl From<Ascii> for Box<Production> {
+    fn from(ascii: Ascii) -> Box<Production> {
+        Box::new(Production::Ascii(ascii))
     }
 }

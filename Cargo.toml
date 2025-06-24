@@ -27,7 +27,9 @@ unique-pointer = { version = "0.8.0" }
 [dev-dependencies]
 k9 = "0.12.0"
 
-
+[[test]]
+name = "test_matcher_optional"
+path = "./tests/test_matcher_optional.rs"
 
 [[test]]
 name = "test_buffer"
@@ -60,9 +62,6 @@ path = "./tests/test_matcher_zero_or_more.rs"
 [[test]]
 name = "test_matcher_not"
 path = "./tests/test_matcher_not.rs"
-[[test]]
-name = "test_matcher_optional"
-path = "./tests/test_matcher_optional.rs"
 
 [[test]]
 name = "test_matcher_atomic"
@@ -79,7 +78,6 @@ path = "./tests/test_matcher_ascii.rs"
 [[test]]
 name = "test_parse_type_like_values"
 path = "./tests/test_parse_type_like_values.rs"
-
 
 # [[test]]
 # name = "test_parse_dummy_data_format"
