@@ -4,7 +4,7 @@ use oom::{Ascii, Match, Matcher, Production, Result, Special, State};
 
 #[test]
 fn test_atomic_one_or_more_and_literals() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("O1");
     let first = Production::Atomic(
         Production::OneOrMore(
             Production::And(vec![Production::Literal("O".into()), Production::Literal("1".into())])
@@ -22,7 +22,7 @@ fn test_atomic_one_or_more_and_literals() -> Result<()> {
 
 #[test]
 fn test_atomic_one_or_more_and_literals_mismatch() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("O 1");
     let first = Production::Atomic(
         Production::OneOrMore(
             Production::And(vec![Production::Literal("O".into()), Production::Literal("1".into())])

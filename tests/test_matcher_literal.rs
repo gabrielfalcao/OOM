@@ -4,7 +4,7 @@ use oom::{Ascii, Match, Matcher, Production, Result, Special, State};
 
 #[test]
 fn test_production_literal() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("string");
     let first = Production::Literal("string".into());
 
     let result = first.is_match(state.as_mut(), "string", &state.position());
@@ -16,7 +16,7 @@ fn test_production_literal() -> Result<()> {
 
 #[test]
 fn test_production_or_literals_nonfirst_match() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("xyz");
     let first =
         Production::Or(vec![Production::Literal("abc".into()), Production::Literal("xyz".into())]);
 
@@ -28,7 +28,7 @@ fn test_production_or_literals_nonfirst_match() -> Result<()> {
 
 #[test]
 fn test_production_or_literals_nonatomic() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new(" abc ");
     let first =
         Production::Or(vec![Production::Literal("abc".into()), Production::Literal("xyz".into())]);
 
@@ -40,7 +40,7 @@ fn test_production_or_literals_nonatomic() -> Result<()> {
 
 #[test]
 fn test_production_and_literals_non_atomic() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("str ing");
     let first =
         Production::And(vec![Production::Literal("str".into()), Production::Literal("ing".into())]);
 
@@ -53,7 +53,7 @@ fn test_production_and_literals_non_atomic() -> Result<()> {
 
 #[test]
 fn test_production_and_literals() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("string");
     let first =
         Production::And(vec![Production::Literal("str".into()), Production::Literal("ing".into())]);
 
@@ -66,7 +66,7 @@ fn test_production_and_literals() -> Result<()> {
 
 #[test]
 fn test_production_or_literals_first_match() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("abc");
     let first =
         Production::Or(vec![Production::Literal("abc".into()), Production::Literal("xyz".into())]);
 

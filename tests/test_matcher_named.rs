@@ -4,7 +4,7 @@ use oom::{Ascii, Match, Matcher, Production, Result, Special, State};
 
 #[test]
 fn test_named_one_or_more_or_literal() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("O1");
     state.register_matcher(
         "O1",
         Production::OneOrMore(

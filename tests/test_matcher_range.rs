@@ -4,7 +4,7 @@ use oom::{Ascii, Match, Matcher, Production, Result, Special, State};
 
 #[test]
 fn test_production_range() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("string");
     let first = Production::OneOrMore(Production::Range('a'..'z').into());
 
     let result = first.is_match(state.as_mut(), "string", &state.position());

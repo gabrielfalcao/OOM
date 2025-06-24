@@ -5,7 +5,7 @@ use oom::{Matcher, Result, State};
 
 #[test]
 fn test_parse_value_unsigned_integer() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("12345");
     state.register_matcher(
         "unsigned",
         And(vec![
@@ -43,7 +43,7 @@ fn test_parse_value_unsigned_integer() -> Result<()> {
 
 #[test]
 fn test_parse_value_integer() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("-12345");
     state.register_matcher(
         "signed",
         And(vec![
@@ -78,6 +78,20 @@ fn test_parse_value_integer() -> Result<()> {
         ])])
     );
 
+    let mut state = State::new("12345");
+    state.register_matcher(
+        "signed",
+        And(vec![
+            Optional(Literal('-'.to_string()).into()),
+            OneOrMore(
+                And(vec![
+                    Or(vec![Literal('0'.to_string()), Range('1'..'9')]),
+                    Ascii(Numeric.into()).into(),
+                ])
+                .into(),
+            ),
+        ]),
+    );
     let result = signed.is_match(state.as_mut(), "12345", &state.position());
     assert_equal!(result.clone().map(|m| m.matcher()), Some(signed.clone()));
     assert_equal!(result.clone().unwrap().span().to_string(), "12345");
@@ -102,7 +116,7 @@ fn test_parse_value_integer() -> Result<()> {
 
 #[test]
 fn test_parse_value_float() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("-12345.6789");
     state.register_matcher(
         "unsigned",
         And(vec![
@@ -148,6 +162,35 @@ fn test_parse_value_float() -> Result<()> {
         Some(inner.clone())
     );
 
+    let mut state = State::new("12345");
+    state.register_matcher(
+        "unsigned",
+        And(vec![
+            Or(vec![Literal('0'.to_string()), Range('1'..'9')]),
+            ZeroOrMore(Ascii(Numeric.into()).into()),
+        ]),
+    );
+    state.register_matcher(
+        "signed",
+        And(vec![
+            Optional(Literal('-'.to_string()).into()),
+            OneOrMore(
+                And(vec![
+                    Or(vec![Literal('0'.to_string()), Range('1'..'9')]),
+                    Ascii(Numeric.into()).into(),
+                ])
+                .into(),
+            ),
+        ]),
+    );
+
+    state.register_matcher(
+        "float",
+        And(vec![
+            Unnamed("signed".to_string()),
+            Optional(And(vec![Literal(".".to_string()), Unnamed("unsigned".to_string())]).into()),
+        ]),
+    );
     let result = float.is_match(state.as_mut(), "12345", &state.position());
     assert_equal!(result.clone().map(|m| m.matcher()), Some(float.clone()));
     assert_equal!(result.clone().unwrap().span().to_string(), "12345");

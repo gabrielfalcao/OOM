@@ -5,8 +5,8 @@ use std::ops::Range;
 use unique_pointer::UniquePointer;
 
 use crate::{
-    with_caller, Error, Match, Matcher, Position, Production, Result, Special, Stack, Token,
-    Traceback,
+    with_caller, Buffer, Error, Match, Matcher, Position, Production, Result, Special, Stack,
+    Token, Traceback,
 };
 
 pub const DEFAULT_WHITESPACE: &'static str = " \t";
@@ -18,8 +18,7 @@ pub struct State {
     in_newline: bool,
     tokens: VecDeque<Token>,
     in_whitespace: bool,
-    buffer: String,
-    window: String,
+    pub(crate) buffer: Buffer,
     length: usize,
     line: usize,
     column: usize,
@@ -30,16 +29,16 @@ pub struct State {
     newline: String,
     productions: BTreeMap<String, Production>,
 }
-impl Default for State {
-    fn default() -> State {
+impl State {
+    pub fn new<T: Display>(input: T) -> State {
+        let input = input.to_string();
         State {
             input: Vec::new(),
             in_newline: false,
             tokens: VecDeque::new(),
             in_whitespace: false,
-            buffer: String::new(),
-            window: String::new(),
-            length: 0,
+            buffer: Buffer::new(&input, false),
+            length: input.len(),
             index: 0,
             production_index: 0,
             line: 1,
@@ -49,13 +48,6 @@ impl Default for State {
             newline: DEFAULT_NEWLINE.to_string(),
             productions: BTreeMap::new(),
         }
-    }
-}
-impl State {
-    pub fn with_length(length: usize) -> State {
-        let mut state = State::default();
-        state.length = length;
-        state
     }
 
     pub fn register_matcher<T: Display>(&mut self, name: T, matcher: Production) -> Result<()> {
@@ -125,6 +117,9 @@ impl State {
 
     pub fn as_mut<'c>(&self) -> &'c mut State {
         UniquePointer::read_only(self).extend_lifetime_mut()
+    }
+    pub fn buffer<'c>(&self) -> &'c mut Buffer {
+        UniquePointer::read_only(&self.buffer).extend_lifetime_mut()
     }
 
     pub fn position(&self) -> Position {

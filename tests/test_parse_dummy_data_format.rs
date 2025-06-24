@@ -4,7 +4,7 @@ use oom::{Ascii, Match, Matcher, Production, Result, Special, State};
 
 #[test]
 fn test_parse_dummy_data_format() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("{one: 'one', foo: 'baz'}");
     state.register_matcher("key", Production::OneOrMore(Production::Ascii(Ascii::Alpha).into()));
     state.register_matcher("open_brace", Production::Literal("{".into()));
     state.register_matcher("colon", Production::Literal(":".into()));

@@ -4,7 +4,7 @@ use oom::{Ascii, Match, Matcher, Production, Result, Special, State};
 
 #[test]
 fn test_zero_or_more_literal() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("OOO");
     let first = Production::ZeroOrMore(Production::Literal("O".into()).into());
 
     let result = first.is_match(state.as_mut(), "OOO", &state.position());
@@ -16,7 +16,7 @@ fn test_zero_or_more_literal() -> Result<()> {
 
 #[test]
 fn test_zero_or_more_and_literals() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("O1");
     let first = Production::ZeroOrMore(
         Production::And(vec![Production::Literal("O".into()), Production::Literal("1".into())])
             .into(),
@@ -31,7 +31,7 @@ fn test_zero_or_more_and_literals() -> Result<()> {
 
 #[test]
 fn test_zero_or_more_or_literals() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("O1");
     let first = Production::ZeroOrMore(
         Production::Or(vec![Production::Literal("O".into()), Production::Literal("1".into())])
             .into(),
@@ -45,7 +45,7 @@ fn test_zero_or_more_or_literals() -> Result<()> {
 }
 #[test]
 fn test_zero_or_more_or_literals_repeat_first() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("O1O");
     let first = Production::ZeroOrMore(
         Production::Or(vec![Production::Literal("O".into()), Production::Literal("1".into())])
             .into(),
@@ -60,7 +60,7 @@ fn test_zero_or_more_or_literals_repeat_first() -> Result<()> {
 
 #[test]
 fn test_zero_or_more_empty() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("");
     let first = Production::ZeroOrMore(
         Production::Or(vec![Production::Literal("O".into()), Production::Literal("1".into())])
             .into(),

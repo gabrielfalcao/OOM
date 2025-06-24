@@ -4,7 +4,7 @@ use oom::{Ascii, Match, Matcher, Production, Result, Special, State};
 
 #[test]
 fn test_production_special_push() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("abc");
     let first = Production::Special(Special::PUSH(Production::Literal("abc".into()).into()));
 
     let result = first.is_match(state.as_mut(), "abc", &state.position());
@@ -30,7 +30,7 @@ fn test_production_special_push() -> Result<()> {
 
 #[test]
 fn test_production_special_pop() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("abcabc");
     let first = Production::And(vec![
         Production::Special(Special::PUSH(Production::Literal("abc".into()).into())),
         Production::Special(Special::POP),
@@ -62,7 +62,7 @@ fn test_production_special_pop() -> Result<()> {
 
 #[test]
 fn test_production_special_whitespace() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("abc abc");
     let first = Production::And(vec![
         Production::Special(Special::PUSH(Production::Literal("abc".into()).into())),
         Production::Special(Special::WHITESPACE),
@@ -96,7 +96,7 @@ fn test_production_special_whitespace() -> Result<()> {
 
 #[test]
 fn test_production_special_peek() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("abc,xyz,xyz");
     let first = Production::And(vec![
         Production::Special(Special::PUSH(Production::Literal("abc".to_string()).into())),
         Production::Literal(",".to_string()),
@@ -140,7 +140,7 @@ fn test_production_special_peek() -> Result<()> {
 
 #[test]
 fn test_production_special_drop() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("abc,xyz,abc");
     let first = Production::And(vec![
         Production::Special(Special::PUSH(Production::Literal("abc".to_string()).into())),
         Production::Literal(",".to_string()),
@@ -184,7 +184,7 @@ fn test_production_special_drop() -> Result<()> {
 
 #[test]
 fn test_production_special_peek_range_lower_stack() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("abc,xyz,abc");
     let first = Production::And(vec![
         Production::Special(Special::PUSH(Production::Literal("abc".to_string()).into())),
         Production::Literal(",".to_string()),
@@ -228,7 +228,7 @@ fn test_production_special_peek_range_lower_stack() -> Result<()> {
 
 #[test]
 fn test_production_special_peek_higher_stack() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("abc,xyz,xyz");
     let first = Production::And(vec![
         Production::Special(Special::PUSH(Production::Literal("abc".to_string()).into())),
         Production::Literal(",".to_string()),
@@ -272,7 +272,7 @@ fn test_production_special_peek_higher_stack() -> Result<()> {
 
 #[test]
 fn test_production_special_peek_any() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("abc,xyz,xyz");
     let first = Production::And(vec![
         Production::Special(Special::PUSH(Production::Literal("abc".to_string()).into())),
         Production::Literal(",".to_string()),

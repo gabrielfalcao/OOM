@@ -4,7 +4,7 @@ use oom::{Ascii, Buffer, Match, Matcher, Production, Result, Special, State};
 
 #[test]
 fn test_buffer_contiguous() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("abc,xyz");
     let abc = Production::Literal("abc".into());
     let comma = Production::Literal(",".into());
     let xyz = Production::Literal("xyz".into());
@@ -31,7 +31,7 @@ fn test_buffer_contiguous() -> Result<()> {
 
 #[test]
 fn test_buffer_non_atomic() -> Result<()> {
-    let mut state = State::default();
+    let mut state = State::new("abc,xyz");
     let abc = Production::Literal("abc".into());
     let comma = Production::Literal(",".into());
     let xyz = Production::Literal("xyz".into());
